@@ -1,5 +1,6 @@
 package au.com.abstractcs.owasp.services;
 
+import au.com.abstractcs.owasp.response.Sanitize;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
+//import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,24 +25,14 @@ public class SanitizerControllerTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void shouldAcceptAndReturnPlainText() throws Exception {
-        String src = "wibble";
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/sanitize?src=" + src,
-                String.class)).contains("wibble");
-    }
-
-    @Test
     public void shouldIdentifyAndRejectBasicHTML() throws Exception {
         final String src = "<BODY>";
 
         String url = "http://localhost:" + port + "/sanitize?src=" + src;
-        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains("");
-
-        //assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/sanitize?src=" + src,
-          //      String.class)).contains("<BODY>");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("", response.getBody().getResponse());
     }
 
     @Test
@@ -48,10 +40,10 @@ public class SanitizerControllerTest {
         final String src = "a non problematic string";
 
         String url = "http://localhost:" + port + "/sanitize?src=" + src;
-        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains(src);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(src, response.getBody().getResponse());
     }
 
     @Test
@@ -59,14 +51,9 @@ public class SanitizerControllerTest {
         final String src = "a string with <p>html";
 
         String url = "http://localhost:" + port + "/sanitize?src=" + src;
-        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains("a string with html");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("a string with html", response.getBody().getResponse());
     }
-/*    @Test
-    public void contexLoads() throws Exception {
-        assertThat(sanitizerController).isNotNull();
-    }*/
-
 }
