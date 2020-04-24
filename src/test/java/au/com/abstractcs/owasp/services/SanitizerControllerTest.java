@@ -31,7 +31,7 @@ public class SanitizerControllerTest {
 
     @Test
     public void shouldIdentifyAndRejectBasicHTML() throws Exception {
-        String src = "<BODY>";
+        final String src = "<BODY>";
 
         String url = "http://localhost:" + port + "/sanitize?src=" + src;
         ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
@@ -43,6 +43,27 @@ public class SanitizerControllerTest {
           //      String.class)).contains("<BODY>");
     }
 
+    @Test
+    public void shouldAllowAndReturnOriginalText() throws Exception {
+        final String src = "a non problematic string";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains(src);
+    }
+
+    @Test
+    public void shouldAllowAndReturnOriginalTextAndStripHTML() throws Exception {
+        final String src = "a string with <p>html";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains("a string with html");
+    }
 /*    @Test
     public void contexLoads() throws Exception {
         assertThat(sanitizerController).isNotNull();
