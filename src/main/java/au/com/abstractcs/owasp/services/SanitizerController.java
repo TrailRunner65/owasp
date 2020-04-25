@@ -1,5 +1,6 @@
 package au.com.abstractcs.owasp.services;
 
+import org.owasp.html.HtmlChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class SanitizerController {
@@ -42,11 +46,29 @@ public class SanitizerController {
             policyFactory = new HtmlPolicyBuilder().toFactory();
             System.out.println(5);
         }
-        return new SanitizedResponse(policyFactory.sanitize(srcText));
+        List<String> changeList = new ArrayList<>();
+        SanitizedResponse response = new SanitizedResponse(policyFactory.sanitize(srcText, new ChangeListener(), changeList));
+        response.setRemovedItems(changeList);
+        return response;
+    }
+
+    class ChangeListener implements HtmlChangeListener<List<String>> {
+        @Override
+        public void discardedTag(List<String> context, String elementName) {
+            System.out.println(elementName + " tag found");
+            context.add(elementName);
+        }
+
+        @Override
+        public void discardedAttributes(List<String> context, String attributeName, String... strings2) {
+            System.out.println(attributeName + " tag found");
+            context.add(attributeName);
+        }
     }
 
     private class SanitizedResponse {
         private String response;
+        private List removedItems;
 
         public SanitizedResponse(String response) {
             this.response = response;
@@ -54,6 +76,14 @@ public class SanitizerController {
 
         public String getResponse() {
             return this.response;
+        }
+
+        public List getRemovedItems() {
+            return removedItems;
+        }
+
+        public void setRemovedItems(List removedItems) {
+            this.removedItems = removedItems;
         }
     }
 }

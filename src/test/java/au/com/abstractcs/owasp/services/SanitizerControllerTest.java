@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-//import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -26,13 +25,15 @@ public class SanitizerControllerTest {
 
     @Test
     public void shouldIdentifyAndRejectBasicHTML() throws Exception {
-        final String src = "<BODY>";
+        final String src = "<body>";
 
         String url = "http://localhost:" + port + "/sanitize?src=" + src;
         ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("body", response.getBody().getRemovedItems().get(0));
     }
 
     @Test
@@ -44,6 +45,7 @@ public class SanitizerControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(src, response.getBody().getResponse());
+        assertEquals(0, response.getBody().getRemovedItems().size());
     }
 
     @Test
@@ -55,5 +57,60 @@ public class SanitizerControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("a string with html", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("p", response.getBody().getRemovedItems().get(0));
+    }
+
+    @Test
+    public void shouldAllowAndReturnOriginalTextAndOnlyClosingHTML() throws Exception {
+        final String src = "a string with </p>html";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("a string with </p>html", response.getBody().getResponse());
+        assertEquals(0, response.getBody().getRemovedItems().size());
+    }
+
+    @Test
+    public void shouldStripMultipleHTML() throws Exception {
+        final String src = "a <b>string</b> with <p>html in many places<span/>";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("a string with html in many places", response.getBody().getResponse());
+        assertEquals(3, response.getBody().getRemovedItems().size());
+        assertEquals("b", response.getBody().getRemovedItems().get(0));
+        assertEquals("p", response.getBody().getRemovedItems().get(1));
+        assertEquals("span", response.getBody().getRemovedItems().get(2));
+    }
+
+    @Test
+    public void shouldStripCustomTags() throws Exception {
+        final String src = "a <wibble>string with a custom tag";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("a string with a custom tag", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("wibble", response.getBody().getRemovedItems().get(0));
+    }
+
+    @Test
+    public void shouldStripAllTextBetweenStartAndEndTags() throws Exception {
+        final String src = "here is<script>some javascript</script> code";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("here is code", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("script", response.getBody().getRemovedItems().get(0));
     }
 }
