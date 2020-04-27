@@ -7,13 +7,13 @@
     	<title>OWASP Sanitizer Test</title>
   	</head>
   	<body>
- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     	<!-- script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script -->
     	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     	<h1>OWASP Sanitizer tester</h1>
 
-    	<form>
+    	<form id="sanitizeForm" action="sanitize" method="post">
 			<div class="form-check">
 				<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="" checked>
 		  		<label class="form-check-label" for="exampleRadios1">None</label>
@@ -27,33 +27,30 @@
 		  		<label class="form-check-label" for="exampleRadios3">Styles</label>
 			</div>
 			<div class="form-group">
-				<label for="exampleFormControlTextarea1">Source HTML:</label>
-				<textarea class="form-control" id="exampleFormControlTextarea1" rows="20"></textarea>
+				<label for="src">Source text:</label>
+				<textarea class="form-control" id="src" name="src" rows="20"></textarea>
 			</div>
 
   			<button type="submit" class="btn btn-primary">Sanitize</button>
 		</form>
+		<div class="form-group" name="showresults">
+			<label for="src">Sanitized result:</label>
+			<textarea class="form-control" id="result" name="result" rows="20"></textarea>
+		</div>
 	</body>
 		<script>
-	  	$(document).ready(function() {
-	  		$.ajax({
-     			//url: 'http://localhost:8080/sanitize?src=%3Chtml%3Esome%20text%3C/html%3E%3Cwibble/%3Egood%20stuff%3Cb%3E&sanitizer=BLOCKS',
-     			url: "http://localhost:8080/sanitize?src=%7B%22src%22%3A%22%3Chtml%3Esome+text%3C%2Fhtml%3E%3Cwibble%2F%3Egood+stuff%3Cb%3E%22%7D",
-     			//headers: {  "Access-Control-Allow-Headers" "Origin, X-Requested-With, Content-Type, Accept" },
-     			dataType: "jsonp",
-     			data: 'jsonp',
-     			//dataType: 'jsonp',
-     			//url: 'http://localhost:8080/sanitize?src=%3Chtml%3Esome%20text%3C/html%3E%3Cwibble/%3Egood%20stuff%3Cb%3E',
-     			success: function(returnData) {
-         			//var res = JSON.parse(returnData);
-         			var res = returnData;
-         			alert(res);
-     			},
-     			error: function(xhr, status, error) {
-         			var errorMessage = xhr.status + ': ' + xhr.statusText
-         			alert('Error - ' + errorMessage);
-     			}
-			});
-		});  	
+		 	$('#sanitizeForm').submit(function(event) {
+		 		var $form = $(this), url = $form.attr('action');
+	  			$.post($form, {
+    				src: $('#src').val(),
+    				dataType: "html"
+  				},
+  				function(data, status){
+  					//$('#result').val(data);
+  					var result = $('<div/>').append(data).find('#showresults').html();
+  					//$('#result').html(data);
+    				//alert("Data: " + data + "\nStatus: " + status);
+  				});
+  			});
 	 	</script>
 </html>

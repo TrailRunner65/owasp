@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,6 +23,26 @@ public class SanitizerControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Test
+    public void shouldIdentifyAndRejectBasicHTMLViaPost() throws Exception {
+        final String src = "<body>";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("src", src);
+
+        String url = "http://localhost:" + port + "/sanitize";
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        ResponseEntity<Sanitize> response = this.restTemplate.postForEntity(url, request, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("body", response.getBody().getRemovedItems().get(0));
+    }
 
     @Test
     public void shouldIdentifyAndRejectBasicHTML() throws Exception {
@@ -69,7 +90,7 @@ public class SanitizerControllerTest {
         ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("a string with </p>html", response.getBody().getResponse());
+        assertEquals("a string with html", response.getBody().getResponse());
         assertEquals(0, response.getBody().getRemovedItems().size());
     }
 
@@ -113,4 +134,29 @@ public class SanitizerControllerTest {
         assertEquals(1, response.getBody().getRemovedItems().size());
         assertEquals("script", response.getBody().getRemovedItems().get(0));
     }
+
+    @Test
+    public void shouldStripInvalidHTMLWithOpeningLessThanOnly() throws Exception {
+        final String src = "here is<script some invalid javascript code";
+
+        String url = "http://localhost:" + port + "/sanitize?src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("here is", response.getBody().getResponse());
+        assertEquals(1, response.getBody().getRemovedItems().size());
+        assertEquals("script", response.getBody().getRemovedItems().get(0));
+    }
+
+/*    @Test
+    public void shouldAllowLinksIfLINKSSpecified() throws Exception {
+        final String src = "here is some allowed<a href=\"url\">link text</a> code";
+
+        String url = "http://localhost:" + port + "/sanitize?sanitizer=LINKS&src=" + src;
+        ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("here is some allowed<a href=\"url\">link text</a> code", response.getBody().getResponse());
+        assertEquals(0, response.getBody().getRemovedItems().size());
+    }*/
 }
