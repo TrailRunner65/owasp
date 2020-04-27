@@ -33,24 +33,49 @@
 
   			<button type="submit" class="btn btn-primary">Sanitize</button>
 		</form>
-		<div class="form-group" name="showresults">
+		<div class="form-group" id="showresults">
 			<label for="src">Sanitized result:</label>
 			<textarea class="form-control" id="result" name="result" rows="20"></textarea>
 		</div>
 	</body>
 		<script>
 		 	$('#sanitizeForm').submit(function(event) {
-		 		var $form = $(this), url = $form.attr('action');
+
+				$.ajax({
+                 	type : 'POST',
+                    url  : 'sanitize',
+                    data : $('#src').val(),
+                    dataType : 'html'
+                })
+                done(function(data) {
+                    $("#result").slideDown();
+                    //$("#formResults").html(data);
+                    $('#result').html(data);
+                        console.log(data);
+                })
+                .fail(function(data) {
+                //    $("#formResults").slideDown();
+                //    $('#formResults').css('color', 'red');
+                //    $("#formResults").html('Something went wrong sending the feedback to the server');
+                    console.log(data);
+                });
+
+
+
+
+		 		event.preventDefault();
+/*		 		var $form = $(this), url = $form.attr('action');
 	  			$.post($form, {
     				src: $('#src').val(),
     				dataType: "html"
   				},
-  				function(data, status){
+  				function(data, status) {
+  					alert("Data: " + data + "\nStatus: " + status);
   					//$('#result').val(data);
   					var result = $('<div/>').append(data).find('#showresults').html();
-  					//$('#result').html(data);
-    				//alert("Data: " + data + "\nStatus: " + status);
-  				});
+  					$('#result').html(data);
+  				});*/
+
   			});
 	 	</script>
 </html>
