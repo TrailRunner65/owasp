@@ -38,44 +38,18 @@
 			<textarea class="form-control" id="result" name="result" rows="20"></textarea>
 		</div>
 	</body>
-		<script>
-		 	$('#sanitizeForm').submit(function(event) {
-
-				$.ajax({
-                 	type : 'POST',
-                    url  : 'sanitize',
-                    data : $('#src').val(),
-                    dataType : 'html'
-                })
-                done(function(data) {
-                    $("#result").slideDown();
-                    //$("#formResults").html(data);
-                    $('#result').html(data);
-                        console.log(data);
-                })
-                .fail(function(data) {
-                //    $("#formResults").slideDown();
-                //    $('#formResults').css('color', 'red');
-                //    $("#formResults").html('Something went wrong sending the feedback to the server');
-                    console.log(data);
-                });
-
-
-
-
-		 		event.preventDefault();
-/*		 		var $form = $(this), url = $form.attr('action');
-	  			$.post($form, {
-    				src: $('#src').val(),
-    				dataType: "html"
-  				},
-  				function(data, status) {
-  					alert("Data: " + data + "\nStatus: " + status);
-  					//$('#result').val(data);
-  					var result = $('<div/>').append(data).find('#showresults').html();
-  					$('#result').html(data);
-  				});*/
-
-  			});
-	 	</script>
+	<script>
+		$('#sanitizeForm').submit(function(event) {
+			event.preventDefault();
+			$.ajax({
+				type : 'POST',
+				url  : 'sanitize',
+				data : $('#sanitizeForm').serialize()
+			}).done(function(data) {
+				$("#result").val(data.response);
+			}).fail(function(data) {
+				console.log("Fail: " + data);
+			});
+		});
+	</script>
 </html>
