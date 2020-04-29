@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 	<link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+	<link rel="stylesheet" href="basic.css">
 	<title>OWASP Sanitizer Test</title>
 </head>
 <body>
@@ -11,38 +12,74 @@
 <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <div class="container">
 	<div class="row">
-		<h1>OWASP Sanitizer tester</h1>
+		<h3>OWASP HTML Sanitizer tester</h3>
 	</div>
 	<form action="sanitize" id="sanitizeForm" method="post">
 		<div class="row">
-			<div class="form-check">
-				<input checked class="form-check-input" id="exampleRadios1" name="exampleRadios" type="radio" value="">
-				<label class="form-check-label" for="exampleRadios1">None</label>
+			<div class="col-md-1">
+				Allow:
 			</div>
-			<div class="form-check">
-				<input class="form-check-input" id="exampleRadios2" name="exampleRadios" type="radio" value="LINKS">
-				<label class="form-check-label" for="exampleRadios2">Links</label>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input checked class="form-check-input" id="exampleRadios1" name="sanitizer" type="radio" value="">
+					<label class="form-check-label" for="exampleRadios1">None</label>
+				</div>
 			</div>
-			<div class="form-check">
-				<input class="form-check-input" id="exampleRadios3" name="exampleRadios" type="radio" value="STYLES">
-				<label class="form-check-label" for="exampleRadios3">Styles</label>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios2" name="sanitizer" type="radio" value="LINKS">
+					<label class="form-check-label" for="exampleRadios2">Links</label>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios3" name="sanitizer" type="radio" value="STYLES">
+					<label class="form-check-label" for="exampleRadios3">Styles</label>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios4" name="sanitizer" type="radio" value="FORMATTING">
+					<label class="form-check-label" for="exampleRadios4">Format</label>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios5" name="sanitizer" type="radio" value="BLOCKS">
+					<label class="form-check-label" for="exampleRadios5">Blocks</label>
+				</div>
+			</div>
+			<div class="col-md-6">
 			</div>
 		</div>
-		<div class="row">
-			<div class="form-group">
-				<label for="src">Source text:</label>
-				<textarea class="form-control" id="src" name="src" rows="20"></textarea>
+		<div class="row mt-3">
+			<div class="col-md">
+				<div class="form-group">
+					<label for="src">Source text:</label>
+					<textarea class="form-control" id="src" name="src" rows="20"></textarea>
+				</div>
 			</div>
 		</div>
-		<div class="row">
-			<button class="btn btn-primary" type="submit">Sanitize</button>
+		<div class="col-md">
+			<div class="row">
+				<button class="btn btn-primary" type="submit">Sanitize</button>
+			</div>
 		</div>
 	</form>
-</div>
-<div class="row">
-	<div class="form-group" id="showresults">
-		<label for="src">Sanitized result:</label>
-		<textarea class="form-control" id="result" name="result" rows="20"></textarea>
+
+	<div class="row mt-3">
+		<div class="col-md">
+			<div class="form-group" id="showresults">
+				<label for="src">Sanitized result:</label>
+				<textarea class="form-control" id="result" name="result" rows="10"></textarea>
+			</div>
+		</div>
+		<div class="col-md">
+			<div class="form-group" id="showremoved">
+				<label for="src">Removed items:</label>
+				<textarea class="form-control" id="removed" name="removed" rows="10"></textarea>
+			</div>
+		</div>
 	</div>
 </div>
 </body>
@@ -55,6 +92,7 @@
       		data : $('#sanitizeForm').serialize()
       	}).done(function(data) {
       		$("#result").val(data.response);
+      		$("#removed").val(data.removedItems);
       	}).fail(function(data) {
       		console.log("Fail: " + data);
       	});

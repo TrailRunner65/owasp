@@ -5,13 +5,15 @@ plugins {
 }
 
 group = 'au.com.abstractcs'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
 }
-
+jar {
+	enabled=true
+}
 dependencies {
 	compile group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: 'r156'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

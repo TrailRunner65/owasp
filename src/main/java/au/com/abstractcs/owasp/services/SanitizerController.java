@@ -57,18 +57,15 @@ public class SanitizerController {
         if (sanitizer != null) {
             if (sanitizer.equalsIgnoreCase("LINKS")) {
                 policyFactory = Sanitizers.LINKS;
-                System.out.println(Sanitizers.LINKS);
-                HtmlPolicyBuilder htmlPolicyBuilder = new HtmlPolicyBuilder();
-                System.out.println(htmlPolicyBuilder.allowStandardUrlProtocols().toFactory());
                 System.out.println(1);
             } else if (sanitizer.equalsIgnoreCase("STYLES")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.STYLES);
+                policyFactory = Sanitizers.STYLES;
                 System.out.println(2);
             } else if (sanitizer.equalsIgnoreCase("FORMATTING")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
+                policyFactory = Sanitizers.FORMATTING;
                 System.out.println(3);
             } else if (sanitizer.equalsIgnoreCase("BLOCKS")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS);
+                policyFactory = Sanitizers.BLOCKS;
                 System.out.println(4);
             } else {
                 policyFactory = new HtmlPolicyBuilder().toFactory();
