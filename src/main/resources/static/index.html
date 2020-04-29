@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
 	<link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
 	<link rel="stylesheet" href="basic.css">
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -25,35 +26,47 @@
 			</div>
 			<div class="col-md-1">
 				<div class="form-check">
-					<input checked class="form-check-input" id="exampleRadios1" name="sanitizer" type="radio" value="">
+					<input checked class="form-check-input" id="exampleRadios1" name="sanitizer" type="radio" value="" data-toggle="tooltip" data-placement="top" title="Strictly sanitize all HTML">
 					<label class="form-check-label" for="exampleRadios1">None</label>
 				</div>
 			</div>
 			<div class="col-md-1">
 				<div class="form-check">
-					<input class="form-check-input" id="exampleRadios2" name="sanitizer" type="radio" value="LINKS">
+					<input class="form-check-input" id="exampleRadios2" name="sanitizer" type="radio" value="LINKS" data-toggle="tooltip" data-placement="top" title="Allows HTTP, HTTPS, MAILTO, and relative links">
 					<label class="form-check-label" for="exampleRadios2">Links</label>
 				</div>
 			</div>
 			<div class="col-md-1">
 				<div class="form-check">
-					<input class="form-check-input" id="exampleRadios3" name="sanitizer" type="radio" value="STYLES">
+					<input class="form-check-input" id="exampleRadios3" name="sanitizer" type="radio" value="STYLES" data-toggle="tooltip" data-placement="top" title="Allows certain safe CSS properties in style='...' attributes">
 					<label class="form-check-label" for="exampleRadios3">Styles</label>
 				</div>
 			</div>
 			<div class="col-md-1">
 				<div class="form-check">
-					<input class="form-check-input" id="exampleRadios4" name="sanitizer" type="radio" value="FORMATTING">
+					<input class="form-check-input" id="exampleRadios4" name="sanitizer" type="radio" value="FORMATTING" data-toggle="tooltip" data-placement="top" title="Allows common formatting elements including <b>, <i>, etc.">
 					<label class="form-check-label" for="exampleRadios4">Format</label>
 				</div>
 			</div>
 			<div class="col-md-1">
 				<div class="form-check">
-					<input class="form-check-input" id="exampleRadios5" name="sanitizer" type="radio" value="BLOCKS">
+					<input class="form-check-input" id="exampleRadios5" name="sanitizer" type="radio" value="BLOCKS" data-toggle="tooltip" data-placement="top" title="Allows common block elements including <p>, <h1>, etc.">
 					<label class="form-check-label" for="exampleRadios5">Blocks</label>
 				</div>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios6" name="sanitizer" type="radio" value="IMAGES" data-toggle="tooltip" data-placement="top" title="Allows <img> elements from HTTP, HTTPS, and relative sources">
+					<label class="form-check-label" for="exampleRadios6">Images</label>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="form-check">
+					<input class="form-check-input" id="exampleRadios7" name="sanitizer" type="radio" value="TABLES" data-toggle="tooltip" data-placement="top" title="Allows common table elements">
+					<label class="form-check-label" for="exampleRadios7">Images</label>
+				</div>
+			</div>
+			<div class="col-md-4">
 			</div>
 		</div>
 		<div class="row mt-3">

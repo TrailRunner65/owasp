@@ -67,9 +67,15 @@ public class SanitizerController {
             } else if (sanitizer.equalsIgnoreCase("BLOCKS")) {
                 policyFactory = Sanitizers.BLOCKS;
                 System.out.println(4);
+            } else if (sanitizer.equalsIgnoreCase("IMAGES")) {
+                policyFactory = Sanitizers.IMAGES;
+                System.out.println(5);
+            } else if (sanitizer.equalsIgnoreCase("TABLES")) {
+                policyFactory = Sanitizers.TABLES;
+                System.out.println(6);
             } else {
                 policyFactory = new HtmlPolicyBuilder().toFactory();
-                System.out.println(5);
+                System.out.println(7);
             }
         } else {
             policyFactory = new HtmlPolicyBuilder().toFactory();
