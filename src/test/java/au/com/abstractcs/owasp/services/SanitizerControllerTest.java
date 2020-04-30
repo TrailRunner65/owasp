@@ -150,7 +150,7 @@ public class SanitizerControllerTest {
 
 /*    @Test
     public void shouldAllowLinksIfLINKSSpecified() throws Exception {
-        final String src = "here is some allowed<a href=\"url\">link text</a> code";
+            final String src = "here is some allowed<a href=\"url\">link text</a> code";
 
         String url = "http://localhost:" + port + "/sanitize?sanitizer=LINKS&src=" + src;
         ResponseEntity<Sanitize> response = this.restTemplate.getForEntity(url, Sanitize.class);

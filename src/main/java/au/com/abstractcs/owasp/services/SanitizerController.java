@@ -13,73 +13,32 @@ import org.owasp.html.Sanitizers;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 @RestController
 public class SanitizerController {
 
-    @RequestMapping(value="/sanitize", method=GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public SanitizedResponse sanitize(@RequestParam(value = "src") String srcText, @RequestParam(value = "sanitizer", required=false) String sanitizer) {
-        PolicyFactory policyFactory;
-        if (sanitizer != null) {
-            if (sanitizer.equalsIgnoreCase("LINKS")) {
-                policyFactory = Sanitizers.LINKS;
-                System.out.println(Sanitizers.LINKS);
-                HtmlPolicyBuilder htmlPolicyBuilder = new HtmlPolicyBuilder();
-                System.out.println(htmlPolicyBuilder.allowStandardUrlProtocols().toFactory());
-                System.out.println(1);
-            } else if (sanitizer.equalsIgnoreCase("STYLES")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.STYLES);
-                System.out.println(2);
-            } else if (sanitizer.equalsIgnoreCase("FORMATTING")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
-                System.out.println(3);
-            } else if (sanitizer.equalsIgnoreCase("BLOCKS")) {
-                policyFactory = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS);
-                System.out.println(4);
-            } else {
-                policyFactory = new HtmlPolicyBuilder().toFactory();
-                System.out.println(5);
-            }
-        } else {
-            policyFactory = new HtmlPolicyBuilder().toFactory();
-            System.out.println(5);
-        }
-        List<String> changeList = new ArrayList<>();
-        SanitizedResponse response = new SanitizedResponse(policyFactory.sanitize(srcText, new ChangeListener(), changeList));
-        response.setRemovedItems(changeList);
-        return response;
-    }
-
     @RequestMapping(value="/sanitize", method=POST, produces=MediaType.APPLICATION_JSON_VALUE)
-    public SanitizedResponse sanitizePost(@RequestParam(value = "src") String srcText, @RequestParam(value = "sanitizer", required=false) String sanitizer) {
-        PolicyFactory policyFactory;
-        if (sanitizer != null) {
-            if (sanitizer.equalsIgnoreCase("LINKS")) {
-                policyFactory = Sanitizers.LINKS;
-                System.out.println(1);
-            } else if (sanitizer.equalsIgnoreCase("STYLES")) {
-                policyFactory = Sanitizers.STYLES;
-                System.out.println(2);
-            } else if (sanitizer.equalsIgnoreCase("FORMATTING")) {
-                policyFactory = Sanitizers.FORMATTING;
-                System.out.println(3);
-            } else if (sanitizer.equalsIgnoreCase("BLOCKS")) {
-                policyFactory = Sanitizers.BLOCKS;
-                System.out.println(4);
-            } else if (sanitizer.equalsIgnoreCase("IMAGES")) {
-                policyFactory = Sanitizers.IMAGES;
-                System.out.println(5);
-            } else if (sanitizer.equalsIgnoreCase("TABLES")) {
-                policyFactory = Sanitizers.TABLES;
-                System.out.println(6);
-            } else {
-                policyFactory = new HtmlPolicyBuilder().toFactory();
-                System.out.println(7);
+    public SanitizedResponse sanitize(@RequestParam(value = "src") String srcText, @RequestParam(value = "sanitizer", required=false) List<String> sanitizers) {
+
+        PolicyFactory policyFactory = new HtmlPolicyBuilder().toFactory();
+        if (sanitizers != null) {
+            if (sanitizers.contains("LINKS")) {
+                policyFactory = policyFactory.and(Sanitizers.LINKS);
             }
-        } else {
-            policyFactory = new HtmlPolicyBuilder().toFactory();
-            System.out.println(5);
+            if (sanitizers.contains("STYLES")) {
+                policyFactory = policyFactory.and(Sanitizers.STYLES);
+            }
+            if (sanitizers.contains("FORMATTING")) {
+                policyFactory = policyFactory.and(Sanitizers.FORMATTING);
+            }
+            if (sanitizers.contains("BLOCKS")) {
+                policyFactory = policyFactory.and(Sanitizers.BLOCKS);
+            }
+            if (sanitizers.contains("IMAGES")) {
+                policyFactory = policyFactory.and(Sanitizers.IMAGES);
+            }
+            if (sanitizers.contains("TABLES")) {
+                policyFactory = policyFactory.and(Sanitizers.TABLES);
+            }
         }
         List<String> changeList = new ArrayList<>();
         SanitizedResponse response = new SanitizedResponse(policyFactory.sanitize(srcText, new ChangeListener(), changeList));
@@ -90,13 +49,11 @@ public class SanitizerController {
     class ChangeListener implements HtmlChangeListener<List<String>> {
         @Override
         public void discardedTag(List<String> context, String elementName) {
-            System.out.println(elementName + " tag found");
             context.add(elementName);
         }
 
         @Override
         public void discardedAttributes(List<String> context, String attributeName, String... strings2) {
-            System.out.println(attributeName + " tag found");
             context.add(attributeName);
         }
     }
