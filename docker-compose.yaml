@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  owasp:
+    container_name: owasp
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: owasp:latest
+    ports:
+      - "8090:8080"
