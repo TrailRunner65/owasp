@@ -1,0 +1,17 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "owasp",
+      "image": "848765744232.dkr.ecr.ap-southeast-2.amazonaws.com/owasp:1.0",
+      "essential": true,
+      "memory": 256,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "containerPort": 8090
+        }
+      ]
+    }
+  ]
+}
